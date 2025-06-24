@@ -8,7 +8,7 @@ export const AppDataSource = new DataSource({
   type: "sqlite", // Correctly specifies SQLite
   database: "database.sqlite", // This is the ONLY essential "connection" detail for SQLite
   // It's the path to your database file.
-  synchronize: false, // For development, automatically creates/updates schema
+  synchronize: true, // For development, automatically creates/updates schema
   logging: ["query", "error"], // Optional: logs SQL queries and errors
   entities: [User, Auction, Bid], // List all your entity classes here
   migrations: [],

@@ -1,7 +1,9 @@
+// src/types/AuctionStatus.ts (or similar)
 export enum AuctionStatus {
+    ACTIVE = "active",
     PENDING = "pending",
-    IN_PROGRESS = "in-progress",
     COMPLETED = "completed",
+    CANCELLED = "cancelled",
 }
 
 export enum Role {

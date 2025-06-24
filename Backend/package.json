@@ -3,10 +3,10 @@
    "version": "1.0.0",
    "main": "server.js",
    "scripts": {
-    "build": "tsc", 
-    "start": "ts-node ./server.ts", 
-    "serve": "node dist/server.js", 
-    "test": "echo \"Error: no test specified\" && exit 1"
+      "build": "tsc",
+      "start": "ts-node ./server.ts",
+      "serve": "node dist/server.js",
+      "test": "echo \"Error: no test specified\" && exit 1"
    },
    "keywords": [],
    "author": "",
@@ -14,16 +14,20 @@
    "type": "commonjs",
    "description": "",
    "dependencies": {
+      "bcryptjs": "^3.0.2",
+      "dotenv": "^16.5.0",
       "express": "^5.1.0",
+      "pg": "^8.14.1",
       "reflect-metadata": "^0.2.2",
       "sqlite3": "^5.1.7",
-      "typeorm": "0.3.25",
-      "pg": "^8.14.1"
+      "typeorm": "0.3.25"
    },
    "devDependencies": {
+      "@types/bcryptjs": "^2.4.6",
+      "@types/dotenv": "^6.1.1",
+      "@types/express": "^5.0.3",
       "@types/node": "^24.0.3",
       "ts-node": "^10.9.2",
-      "typescript": "^5.8.3",
-      "@types/express": "^5.0.3"
+      "typescript": "^5.8.3"
    }
 }
