@@ -1,12 +1,16 @@
 import { AppDataSource } from "../src/data-source";
-import { BadRequestError, ForbiddenError, NotFoundError } from "../errors/AppErr";
+import {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} from "../errors/AppErr";
 import { Auction } from "../src/entity/Auction";
 import { User } from "../src/entity/User";
 import { AuctionStatus } from "../types/enums";
 
 class AuctionService {
   private auctionRepository = AppDataSource.getRepository(Auction);
-  private userRepository = AppDataSource.getRepository(User); // Might need this for relationships
+  private userRepository = AppDataSource.getRepository(User);
 
   //Register Auction function
   async registerAuction(
@@ -51,7 +55,8 @@ class AuctionService {
   async getAllAuctions(): Promise<Auction[]> {
     return this.auctionRepository.find();
   }
-  
+
+  //Service to get an Auction by ID
   async getAuctionById(id: number): Promise<Auction> {
     const auction = await this.auctionRepository.findOneBy({ id });
 
@@ -62,43 +67,55 @@ class AuctionService {
     }
   }
 
-  async updateAuction(auctionId: number, updateData: any, userId: number): Promise<Auction> {
-        const auction = await this.auctionRepository.findOneBy({ id: auctionId });
+  //Service to update an Auction by seller
+  async updateAuction(
+    auctionId: number,
+    updateData: any,
+    userId: number
+  ): Promise<Auction> {
+    const auction = await this.auctionRepository.findOneBy({ id: auctionId });
 
-        if (!auction) {
-            throw new NotFoundError(`Auction with ID ${auctionId} not found.`);
-        }
-
-        // --- AUTHORIZATION CHECK IN SERVICE ---
-        if (auction.seller.id !== userId) { // Assuming auction.sellerId is the direct ID
-            // If seller is a relation, it might be auction.seller.id
-            throw new ForbiddenError("You are not authorized to update this auction. Only the creator can.");
-        }
-        // --- END AUTHORIZATION CHECK ---
-
-        // Update the auction properties (you might want specific fields only)
-        Object.assign(auction, updateData);
-
-        // Save the updated auction
-        const updatedAuction = await this.auctionRepository.save(auction);
-        return updatedAuction;
+    if (!auction) {
+      throw new NotFoundError(`Auction with ID ${auctionId} not found.`);
     }
 
-    async deleteAuction(auctionId: number, userId: number): Promise<void> {
-        const auction = await this.auctionRepository.findOneBy({ id: auctionId });
-
-        if (!auction) {
-            throw new NotFoundError(`Auction with ID ${auctionId} not found.`);
-        }
-
-        // --- AUTHORIZATION CHECK IN SERVICE ---
-        if (auction.seller.id !== userId) { // Assuming auction.sellerId
-            throw new ForbiddenError("You are not authorized to delete this auction. Only the creator can.");
-        }
-        // --- END AUTHORIZATION CHECK ---
-
-        await this.auctionRepository.remove(auction);
+    // --- AUTHORIZATION CHECK IN SERVICE ---
+    if (auction.seller.id !== userId) {
+      // Assuming auction.sellerId is the direct ID
+      // If seller is a relation, it might be auction.seller.id
+      throw new ForbiddenError(
+        "You are not authorized to update this auction. Only the creator can."
+      );
     }
+    // --- END AUTHORIZATION CHECK ---
+
+    // Update the auction properties (you might want specific fields only)
+    Object.assign(auction, updateData);
+
+    // Save the updated auction
+    const updatedAuction = await this.auctionRepository.save(auction);
+    return updatedAuction;
+  }
+
+  //Service to delete an auction only by seller
+  async deleteAuction(auctionId: number, userId: number): Promise<void> {
+    const auction = await this.auctionRepository.findOneBy({ id: auctionId });
+
+    if (!auction) {
+      throw new NotFoundError(`Auction with ID ${auctionId} not found.`);
+    }
+
+    // --- AUTHORIZATION CHECK IN SERVICE ---
+    if (auction.seller.id !== userId) {
+      // Assuming auction.sellerId
+      throw new ForbiddenError(
+        "You are not authorized to delete this auction. Only the creator can."
+      );
+    }
+    // --- END AUTHORIZATION CHECK ---
+
+    await this.auctionRepository.remove(auction);
+  }
 }
 
 export const auctionService = new AuctionService();

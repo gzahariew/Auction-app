@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinColumn } from "typeorm";
+// src/entity/Bid.ts - CORRECTED
+
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from "typeorm"; // Ensure CreateDateColumn is imported for timestamp
 import { Auction } from "./Auction";
 import { User } from "./User";
 
@@ -7,21 +9,26 @@ export class Bid {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: "decimal", precision: 10, scale: 2 }) // Best practice for monetary values
   amount: number;
 
-  @Column()
+  @CreateDateColumn() // Automatically sets the creation timestamp
   timestamp: Date;
 
-    // --- FOREIGN KEY 1: Auction the Bid belongs to ---
-  // Many Bids belong to One Auction
-  @ManyToOne(() => Auction, auction => auction.bids) // 'auction.bids' is the inverse relationship in the Auction entity
-  @JoinColumn({ name: "auctionId" }) // This creates the 'auctionId' column in the 'bid' table
-  auction: Auction; // This property will hold the full Auction object
+  // --- FOREIGN KEY 1: Auction the Bid belongs to ---
+  @ManyToOne(() => Auction, auction => auction.bids, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: "auctionId" }) // This specifies the column name in the DB
+  auction: Auction; // This property will hold the full Auction object when loaded
+
+  @Column() // <--- ADD THIS LINE
+  auctionId: number; // <--- ADD THIS LINE: Explicitly declare the foreign key ID property
+
 
   // --- FOREIGN KEY 2: User who placed the Bid ---
-  // Many Bids are placed by One User
-  @ManyToOne(() => User, user => user.bids) // 'user.bids' is the inverse relationship in the User entity
-  @JoinColumn({ name: "userId" }) // This creates the 'userId' column in the 'bid' table
-  user: User; // This property will hold the full User object
+  @ManyToOne(() => User, user => user.bids, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: "userId" }) // This specifies the column name in the DB
+  user: User; // This property will hold the full User object when loaded
+
+  @Column() // <--- ADD THIS LINE
+  userId: number; // <--- ADD THIS LINE: Explicitly declare the foreign key ID property
 }

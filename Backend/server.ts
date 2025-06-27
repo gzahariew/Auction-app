@@ -3,6 +3,8 @@ import "reflect-metadata"; // Make sure this is at the very top of your entry fi
 import express from "express";
 import { AppDataSource } from "./src/data-source"; // Your TypeORM data source
 import userRoutes from "./routes/userRoutes"; // <--- You import the router
+import auctionRoutes from "./routes/auctionRoutes";
+import bidRoutes from "./routes/bidRoutes"
 
 const app = express();
 const port = 3000;
@@ -21,6 +23,10 @@ async function startServer() {
     // src/index.ts
 
     app.use("/api/user", userRoutes); // <--- You mount it under a base path!
+
+    app.use("/api/auctions", auctionRoutes);
+
+    app.use("/api/bid", bidRoutes);
 
     // Basic welcome route
     app.get("/", (req, res) => {

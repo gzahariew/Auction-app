@@ -8,6 +8,16 @@
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "sourceMap": true
-  }
+    "sourceMap": true,
+    "rootDir": "./" // IMPORTANT: Set rootDir to the project root for paths t
+  },
+  "include": [
+    "./controllers/**/*.ts", // Include all .ts files in the controllers folder
+    "./Services/**/*.ts", // Include all .ts files in the Services folder (note capital S)
+    "./middleware/**/*.ts", // Include all .ts files in the middleware folder
+    "./routes/**/*.ts", // Include all .ts files in the routes folder
+    "./types/**/*.ts", // Include all .ts and .d.ts files in the src folder (covers src/types/express.d.ts)
+    "./db.ts", // Include top-level db.ts
+    "./server.ts", // Include top-level server.ts
+  ]
 }

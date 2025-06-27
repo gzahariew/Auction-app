@@ -5,6 +5,7 @@ import { ConflictError, NotFoundError } from '../errors/AppErr';
 
 class UserService {
     private userRepository = AppDataSource.getRepository(User);
+    registerAuction: any;
 
     async getAllUsers(): Promise<User[]> {
         return this.userRepository.find();
