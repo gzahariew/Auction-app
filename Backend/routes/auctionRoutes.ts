@@ -11,10 +11,6 @@ router.get('/', auctionController.getAllAuctions);
 // GET /api/auctions/:id - Get a specific auction by ID
 router.get('/:id', auctionController.getAuctionById);
 
-// --- Protected Routes (Authentication required) ---
-// Use authMiddleware for routes that require a logged-in user
-// The order matters: middleware first, then controller method
-
 // POST /api/auctions - Create a new auction (requires authentication to know the seller)
 router.post('/', authMiddleware, auctionController.createAuction);
 

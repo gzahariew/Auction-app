@@ -9,6 +9,8 @@ import {
   ForbiddenError,
 } from "../errors/AppErr";
 import { AuctionStatus } from "../types/enums"; // Assuming you have this enum
+import { io } from "../server";
+import { Timestamp } from "typeorm";
 
 class BidService {
   private bidRepository = AppDataSource.getRepository(Bid);
@@ -27,7 +29,7 @@ class BidService {
       relations: ["seller"], // Load the seller to check if bidder is seller
     });
 
-     const user = await this.userRepository.findOneBy({ id: userId });
+    const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!auction) {
       throw new NotFoundError(`Auction with ID ${auctionId} not found.`);
@@ -74,19 +76,23 @@ class BidService {
     // --- All Validations Passed, Now Create and Update ---
 
     const newBid = this.bidRepository.create({
-            amount: bidAmount,
-            auctionId: auction.id, // Direct ID assignment
-            userId: user.id       // Direct ID assignment (matching entity property name)
-            // If you still want the relation objects on the created entity in memory, you can add:
-            // auction: auction,
-            // user: user
-        });
+      amount: bidAmount,
+      auctionId: auction.id, // Direct ID assignment
+      userId: user.id, // Direct ID assignment (matching entity property name)
+      timestamp: new Date(),
+    });
     // 8. Save the new bid
     await this.bidRepository.save(newBid);
 
-    // 9. Update the auction's current price
-    auction.currentPrice = bidAmount;
-    await this.auctionRepository.save(auction); // Save the updated auction
+    io.to(auctionId.toString()).emit("auctionUpdate", {
+      auctionId: auction.id,
+      newPrice: auction.currentPrice,
+      lastBidderId: bidder.id,
+      // You can include more data relevant to the UI update
+    });
+    console.log(
+      `Socket.IO: Emitted 'auctionUpdate' for auction ${auction.id}: New price ${auction.currentPrice}`
+    );
 
     return newBid; // Return the newly created bid (or the updated auction, depends on preference)
   }
